@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitBook Notifications</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+    }
+
+    .notification {
+      display: none;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 360px;
+      max-width: calc(100vw - 40px);
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .header h3 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .close {
+      border: none;
+      background: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .content {
+      padding: 16px;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    .content pre {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="notification" class="notification">
+    <div class="header">
+      <h3 id="title">GitBook page updated</h3>
+      <button class="close" id="close" aria-label="Close">×</button>
+    </div>
+
+    <div class="content">
+      <pre id="content"></pre>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+
+  <script>
+    const socket = io();
+
+    const notification = document.getElementById("notification");
+    const title = document.getElementById("title");
+    const content = document.getElementById("content");
+
+    socket.on("gitbook-update", (update) => {
+      title.textContent = update.title || "GitBook page updated";
+      content.textContent = update.content || "No content available.";
+      notification.style.display = "block";
+    });
+
+    document.getElementById("close").addEventListener("click", () => {
+      notification.style.display = "none";
+    });
+  </script>
+</body>
+</html>
